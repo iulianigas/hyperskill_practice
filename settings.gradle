@@ -1,4 +1,5 @@
 buildscript {
+<<<<<<< HEAD
   repositories {
     maven { url 'https://packages.jetbrains.team/maven/p/hyperskill-hs-test/maven' }
     maven { url 'https://jitpack.io' }
@@ -33,6 +34,42 @@ rootProject.projectDir.eachDirRecurse {
 
 def isTaskDir(File dir) {
   return new File(dir, "src").exists() || new File(dir, "test").exists()
+=======
+    repositories {
+        maven { url "https://packages.jetbrains.team/maven/p/academy/hyperskill-hspc" }
+		maven { url "https://jitpack.io" }
+    }
+
+    dependencies {
+        classpath "com.github.hyperskill:hs-gradle-plugin:release-SNAPSHOT"
+    }
+
+    configurations.all {
+        resolutionStrategy.cacheChangingModulesFor 0, 'seconds'
+    }
+}
+
+static String sanitizeName(String name) {
+    return name.replaceAll("[ /\\\\:<>\"?*|()]", "_").replaceAll("(^[.]+)|([.]+\$)", "")
+}
+
+rootProject.projectDir.eachDirRecurse {
+    if (!isTaskDir(it) || it.path.contains(".idea")) {
+        return
+    }
+    def taskRelativePath = rootDir.toPath().relativize(it.toPath())
+    def parts = []
+    for (name in taskRelativePath) {
+        parts.add(sanitizeName(name.toString()))
+    }
+    def moduleName =  parts.join("-")
+    include "$moduleName"
+    project(":$moduleName").projectDir = it
+}
+
+def isTaskDir(File dir) {
+    return new File(dir, "src").exists() || new File(dir, "test").exists()
+>>>>>>> 77dc133 (added simple bot project for beginner)
 }
 
 include 'util'
